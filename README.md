@@ -1,1 +1,2 @@
-# Manseryeok_project
+#종강기념프젝
+#짜라잔~

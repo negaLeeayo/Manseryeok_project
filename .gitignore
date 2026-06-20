@@ -216,3 +216,24 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Node / React
+node_modules/
+frontend/build/
+frontend/.env
+
+# 환경변수
+.env
+.env.local
+.env.development
+.env.production
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Mac
+.DS_Store

@@ -1,10 +1,13 @@
 import os
 from pathlib import Path
 from urllib.parse import urlencode
+from datetime import datetime, timedelta, timezone
+
 import httpx
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
+from jose import jwt
 
 env_path = Path(__file__).resolve().parents[2] / ".env"
 load_dotenv(env_path)
@@ -14,7 +17,24 @@ router = APIRouter(
     tags=["auth"]
 )
 
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    secret_key = os.getenv("JWT_SECRET_KEY")
+    algorithm = os.getenv("JWT_ALGORITHM", "HS256")
 
+    if not secret_key:
+        raise HTTPException(status_code=500, detail="JWT_SECRET_KEY is not set")
+
+    to_encode = data.copy()
+
+    expire = datetime.now(timezone.utc) + (
+        expires_delta if expires_delta else timedelta(hours=1)
+    )
+
+    to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=algorithm)
+
+    return encoded_jwt
 @router.get("/test")
 def auth_test():
     return {"message": "auth router works"}
@@ -123,13 +143,23 @@ def kakao_callback(code: str | None = None, error: str | None = None):
     nickname = profile.get("nickname")
     profile_image = profile.get("profile_image_url")
 
+    access_token = create_access_token(
+    data={
+        "provider": "kakao",
+        "provider_user_id": str(kakao_id),
+        "email": email,
+    },
+    expires_delta=timedelta(hours=1)
+)
     return {
-        "message": "kakao login success",
-        "user": {
-            "provider": "kakao",
-            "provider_user_id": kakao_id,
-            "email": email,
-            "nickname": nickname,
-            "profile_image": profile_image,
-        }
+    "message": "kakao login success",
+    "access_token": access_token,
+    "token_type": "bearer",
+    "user": {
+        "provider": "kakao",
+        "provider_user_id": kakao_id,
+        "email": email,
+        "nickname": nickname,
+        "profile_image": profile_image,
     }
+}

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 import httpx
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 from fastapi.responses import RedirectResponse
 from jose import jwt
 
@@ -35,6 +35,26 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=algorithm)
 
     return encoded_jwt
+def verify_access_token(authorization: str | None):
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header is missing")
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header format")
+
+    token = authorization.replace("Bearer ", "")
+
+    secret_key = os.getenv("JWT_SECRET_KEY")
+    algorithm = os.getenv("JWT_ALGORITHM", "HS256")
+
+    if not secret_key:
+        raise HTTPException(status_code=500, detail="JWT_SECRET_KEY is not set")
+
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=[algorithm])
+        return payload
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
 @router.get("/test")
 def auth_test():
     return {"message": "auth router works"}
@@ -151,15 +171,24 @@ def kakao_callback(code: str | None = None, error: str | None = None):
     },
     expires_delta=timedelta(hours=1)
 )
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    redirect_url = f"{frontend_url}/auth/success?access_token={access_token}"
+    return RedirectResponse(redirect_url)
+   
+@router.get("/me")
+def get_me(authorization: str | None = Header(default=None)):
+    payload = verify_access_token(authorization)
+
     return {
-    "message": "kakao login success",
-    "access_token": access_token,
-    "token_type": "bearer",
-    "user": {
-        "provider": "kakao",
-        "provider_user_id": kakao_id,
-        "email": email,
-        "nickname": nickname,
-        "profile_image": profile_image,
+        "message": "authenticated",
+        "user": {
+            "provider": payload.get("provider"),
+            "provider_user_id": payload.get("provider_user_id"),
+            "email": payload.get("email"),
+        }
     }
-}
+@router.post("/logout")
+def logout():
+    return {
+        "message": "logout success"
+        }

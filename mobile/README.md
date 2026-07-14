@@ -1,6 +1,6 @@
 # 빛결 모바일 앱
 
-Expo와 React Native로 만든 온보딩 및 스플래시 모바일 앱입니다. 기존 Vite 웹 버전은 루트의 `frontend/`에 별도로 보존되어 있습니다.
+Expo와 React Native로 만든 모바일 앱입니다. 기존 Vite 웹 버전은 루트의 `frontend/`에 별도로 보존되어 있습니다.
 
 ## 휴대폰에서 실행
 
@@ -26,4 +26,4 @@ npx tsc --noEmit
 npx expo export --platform android
 ```
 
-동의서, 로그인 및 사용자 정보 입력 화면은 `feature/frontend/user` 브랜치에서 이어집니다.
+현재 소셜 로그인 버튼은 화면 흐름 확인을 위해 이름 입력 화면으로 이동합니다. 실제 카카오·구글 로그인은 모바일 딥 링크와 서버 OAuth 설정을 연결해야 합니다.

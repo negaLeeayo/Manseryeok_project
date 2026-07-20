@@ -88,7 +88,6 @@ def test_get_saju_rejects_invalid_date():
     )
 
     assert response.status_code == 400
-
 def test_post_saju_calculate():
     response = client.post(
         "/saju/calculate",
@@ -123,6 +122,17 @@ def test_post_saju_calculate():
         "geum": 1,
         "su": 0
     }
+
+    assert data["daewoon_list"] is not None
+    assert len(data["daewoon_list"]) == 8
+
+    assert data["daewoon_list"][0]["age"] == 1
+    assert data["daewoon_list"][1]["age"] == 11
+    assert data["daewoon_list"][2]["age"] == 21
+
+    assert "cheongan" in data["daewoon_list"][0]
+    assert "jiji" in data["daewoon_list"][0]
+    assert "ohaeng" in data["daewoon_list"][0]
 
 def test_post_saju_rejects_invalid_hour():
     response = client.post(

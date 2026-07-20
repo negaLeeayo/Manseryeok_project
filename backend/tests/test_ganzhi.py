@@ -1,4 +1,4 @@
-from backend.core.ganzhi import (
+from core.ganzhi import (
     get_stem,
     get_branch,
     get_ganzhi,

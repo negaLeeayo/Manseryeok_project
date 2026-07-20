@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from core.daewoon import calculate_daewoon
 from fastapi import APIRouter, HTTPException
 
 from core.ganzhi import (
@@ -12,9 +12,9 @@ from schemas.saju import (
     SajuRequest,
     SajuResponse,
     Pillar,
-    OhaengDistribution
+    OhaengDistribution,
+    Daewoon,
 )
-
 router = APIRouter(
     prefix="/saju",
     tags=["사주"],
@@ -223,6 +223,15 @@ async def calculate_saju_post(request: SajuRequest):
         )
 
         result = calculate_saju(solar_datetime)
+        
+        daewoon_results = calculate_daewoon(
+            month_stem=result.month_pillar.stem,
+            month_branch=result.month_pillar.branch,
+            year_stem=result.year_pillar.stem,
+            gender=request.gender,
+            start_age=1,
+            count=8
+        )
 
         pillars = [
             result.year_pillar,
@@ -261,9 +270,17 @@ async def calculate_saju_post(request: SajuRequest):
                 geum=ohaeng["금"],
                 su=ohaeng["수"]
             ),
-            daewoon_list=None,
-            message="사주팔자 계산이 완료되었습니다."
-        )
+            daewoon_list=[
+                Daewoon(
+                    age=item.age,
+                    cheongan=item.cheongan,
+                    jiji=item.jiji,
+                    ohaeng=item.ohaeng
+                )
+                for item in daewoon_results
+                ],
+                message="사주팔자 계산이 완료되었습니다."
+                )
 
     except HTTPException:
         raise

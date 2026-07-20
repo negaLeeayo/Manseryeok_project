@@ -1,8 +1,6 @@
 import pytest
 
-from backend.core.lunar_calendar import normalize_birth_date
-
-
+from core.lunar_calendar import normalize_birth_date
 def test_solar_date_returns_same_date():
     result = normalize_birth_date(
         year=2000,

@@ -1,0 +1,30 @@
+
+name: backend
+services:
+  postgres:
+    container_name: manseryeok-postgres
+    environment:
+      POSTGRES_DB: byeolgyeol
+      POSTGRES_PASSWORD: manseryeok1234
+      POSTGRES_USER: postgres
+    image: postgres:16-alpine
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 5432
+        published: "5433"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: manseryeok_postgres_data
+        target: /var/lib/postgresql/data
+        volume: {}
+networks:
+  default:
+    name: backend_default
+volumes:
+  manseryeok_postgres_data:
+    name: backend_manseryeok_postgres_data
+(manseyuk) PS C:\만세력 프로젝트\Manseryeok_project\backend> 

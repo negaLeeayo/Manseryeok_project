@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 
 import requests
 from dotenv import load_dotenv
-import pytest
+
 
 env_path = Path(__file__).resolve().parents[1] / ".env"
 load_dotenv(env_path)

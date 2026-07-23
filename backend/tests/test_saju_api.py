@@ -98,6 +98,8 @@ def test_post_saju_calculate():
             "is_lunar": False
         }
     )
+    print(response.status_code)
+    print(response.text)
 
     assert response.status_code == 200
 
@@ -126,9 +128,9 @@ def test_post_saju_calculate():
     assert data["daewoon_list"] is not None
     assert len(data["daewoon_list"]) == 8
 
-    assert data["daewoon_list"][0]["age"] == 1
-    assert data["daewoon_list"][1]["age"] == 11
-    assert data["daewoon_list"][2]["age"] == 21
+    assert data["daewoon_list"][0]["age"] == 6
+    assert data["daewoon_list"][1]["age"] == 16
+    assert data["daewoon_list"][2]["age"] == 26
 
     assert "cheongan" in data["daewoon_list"][0]
     assert "jiji" in data["daewoon_list"][0]

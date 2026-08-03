@@ -78,3 +78,110 @@ def get_ganzhi_detail(index: int) -> dict:
         "branch": branch,
         "ganzhi": stem + branch
     }
+
+STEM_OHAENG = {
+    "갑": "목",
+    "을": "목",
+    "병": "화",
+    "정": "화",
+    "무": "토",
+    "기": "토",
+    "경": "금",
+    "신": "금",
+    "임": "수",
+    "계": "수",
+}
+
+
+BRANCH_OHAENG = {
+    "자": "수",
+    "축": "토",
+    "인": "목",
+    "묘": "목",
+    "진": "토",
+    "사": "화",
+    "오": "화",
+    "미": "토",
+    "신": "금",
+    "유": "금",
+    "술": "토",
+    "해": "수",
+}
+
+
+def get_stem_ohaeng(stem: str) -> str:
+    """
+    천간에 해당하는 오행을 반환한다.
+
+    예:
+        갑 -> 목
+        병 -> 화
+        경 -> 금
+    """
+
+    if stem not in STEM_OHAENG:
+        raise ValueError(f"유효하지 않은 천간입니다: {stem}")
+
+    return STEM_OHAENG[stem]
+
+
+def get_branch_ohaeng(branch: str) -> str:
+    """
+    지지에 해당하는 오행을 반환한다.
+
+    예:
+        자 -> 수
+        인 -> 목
+        오 -> 화
+    """
+
+    if branch not in BRANCH_OHAENG:
+        raise ValueError(f"유효하지 않은 지지입니다: {branch}")
+
+    return BRANCH_OHAENG[branch]
+
+def calculate_ohaeng_distribution(pillars: list) -> dict:
+    """
+    사주 기둥들의 천간과 지지를 기준으로
+    오행 분포를 계산한다.
+
+    기둥 4개를 전달하면
+    천간 4개 + 지지 4개, 총 8글자의 오행을 센다.
+
+    Args:
+        pillars:
+            stem과 branch 속성을 가진 사주 기둥 객체 목록
+
+    Returns:
+        목, 화, 토, 금, 수의 개수를 담은 딕셔너리
+    """
+
+    counts = {
+        "mok": 0,
+        "hwa": 0,
+        "to": 0,
+        "geum": 0,
+        "su": 0,
+    }
+
+    ohaeng_key_map = {
+        "목": "mok",
+        "화": "hwa",
+        "토": "to",
+        "금": "geum",
+        "수": "su",
+    }
+
+    for pillar in pillars:
+        stem_ohaeng = get_stem_ohaeng(pillar.stem)
+        branch_ohaeng = get_branch_ohaeng(pillar.branch)
+
+        counts[
+            ohaeng_key_map[stem_ohaeng]
+        ] += 1
+
+        counts[
+            ohaeng_key_map[branch_ohaeng]
+        ] += 1
+
+    return counts

@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
+﻿from fastapi import APIRouter, HTTPException
 
-from backend.core.lunar_calendar import normalize_birth_date
+from core.lunar_calendar import normalize_birth_date
 
 router = APIRouter(prefix="/lunar", tags=["lunar"])
 

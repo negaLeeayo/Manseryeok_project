@@ -1,6 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import saju, jeolgi, lunar, auth
+from api.routers import (
+    auth,
+    daewoon,
+    jeolgi,
+    lunar,
+    saju,
+    saju_profile,
+)
 
 app = FastAPI(
     title="사주 API",
@@ -22,7 +29,10 @@ app.include_router(saju.router)
 app.include_router(jeolgi.router)
 app.include_router(lunar.router)
 app.include_router(auth.router)
+app.include_router(saju_profile.router)
 
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "service": "사주 API"}
+
+app.include_router(daewoon.router)

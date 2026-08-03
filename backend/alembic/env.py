@@ -6,7 +6,7 @@ from pathlib import Path
 from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
-
+from models.saju_profile import SajuProfile
 
 # backend 폴더를 Python import 경로에 추가
 backend_path = Path(__file__).resolve().parents[1]

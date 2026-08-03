@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.database import Base
+
+if TYPE_CHECKING:
+    from models.saju_profile import SajuProfile
 
 
 class User(Base):
@@ -35,7 +41,14 @@ class User(Base):
         nullable=False,
     )
 
-    social_accounts: Mapped[list["SocialAccount"]] = relationship(
+    # 사용자 한 명은 여러 개의 소셜 계정을 가질 수 있다.
+    social_accounts: Mapped[list[SocialAccount]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+    # 사용자 한 명은 여러 개의 사주 프로필을 가질 수 있다.
+    saju_profiles: Mapped[list[SajuProfile]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )
@@ -58,8 +71,12 @@ class SocialAccount(Base):
     )
 
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey(
+            "users.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
+        index=True,
     )
 
     provider: Mapped[str] = mapped_column(
@@ -78,6 +95,6 @@ class SocialAccount(Base):
         nullable=False,
     )
 
-    user: Mapped["User"] = relationship(
+    user: Mapped[User] = relationship(
         back_populates="social_accounts",
     )
